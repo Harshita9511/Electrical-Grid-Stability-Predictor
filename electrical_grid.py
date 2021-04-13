@@ -21,8 +21,12 @@ scaler=load('Scaler.joblib')
 
 @app.route('/',methods=['GET'])
 
-@app.route('/electrical_grid', methods=['GET','POST'])
+@app.route('/electrical_grid',methods=['GET'])
 def electrical_grid():
+    return render_template('electrical_grid.html', title='Electrical Grid Stability')
+
+@app.route('/predictor', methods=['GET','POST'])
+def predictor():
     if request.method == 'POST':
         tau1 = float(request.form['tau1'])
         tau2 = float(request.form['tau2'])
@@ -41,13 +45,15 @@ def electrical_grid():
         prediction = model_grid.predict(X_test)
         
         if prediction[0][0] >= 0:
-            return render_template('electrical_grid.html', prediction_text="Oops! the system is linearly unstable with a stability value of {:.5f}.".format(prediction[0][0]), title='Electrical Grid Stability')
+            return render_template('prediction.html', prediction_text="Oops! the system is linearly unstable with a stability value of {:.5f}.".format(prediction[0][0]), title='Electrical Grid Stability')
         else:
-            return render_template('electrical_grid.html', prediction_text="Great! the system is stable with a stability value of {:.5f}.".format(prediction[0][0]), title='Electrical Grid Stability')
+            return render_template('prediction.html', prediction_text="Great! the system is stable with a stability value of {:.5f}.".format(prediction[0][0]), title='Electrical Grid Stability')
     else:
-        return render_template('electrical_grid.html', title='Electrical Grid Stability')
+        return render_template('predictor.html', title='Electrical Grid Stability')
 
 
 if __name__=='__main__':
     app.run(debug=True)
+
+
 
